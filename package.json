@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/Smriti7111/AgroFund-Backend/issues"
   },
-  "homepage": "https://github.com/Smriti7111/AgroFund-Backend#readme"
+  "homepage": "https://github.com/Smriti7111/AgroFund-Backend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.9"
+  }
 }
