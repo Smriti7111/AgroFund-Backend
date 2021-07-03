@@ -1,0 +1,20 @@
+{
+  "name": "agrofund",
+  "version": "1.0.0",
+  "description": "Platform where farmers can raise fund",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Smriti7111/AgroFund-Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Smriti7111/AgroFund-Backend/issues"
+  },
+  "homepage": "https://github.com/Smriti7111/AgroFund-Backend#readme"
+}
