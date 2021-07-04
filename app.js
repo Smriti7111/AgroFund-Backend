@@ -16,8 +16,7 @@ let conn = mongoose.connection;
 
 conn.on("open", () => {
   console.log("Connected to database");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server started at port ${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Server started at port ${PORT}`);
+  });
 });
