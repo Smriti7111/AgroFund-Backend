@@ -1,6 +1,7 @@
 import Farmer from "../models/Farmer.js";
-import { Response, Check } from "../helpers/helpers.js";
+import { Response, Check, ErrorResponse } from "../helpers/helpers.js";
 import passwordHash from "password-hash";
+import User from "../models/User.js";
 // Create Farmer
 export const CreateFarmer = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ export const CreateFarmer = async (req, res) => {
         req.body.password,
       ])
     ) {
-      return res.send(Response("error", "Empty Field Sent", null));
+      return res.send(ErrorResponse("Empty Field"));
     }
 
     //   Checks if wallet is registered already
@@ -23,14 +24,14 @@ export const CreateFarmer = async (req, res) => {
       walletAddress: req.body.walletAddress,
     });
     if (existingWallet) {
-      return res.send(Response("error", "Wallet in use", null));
+      return res.send(ErrorResponse("Wallet already registered"));
     }
 
     // Checks if Phone number in use
     let existingContact = await Farmer.findOne({ contact: req.body.contact });
 
     if (existingContact) {
-      return res.send(Response("error", "Contact Number in use", null));
+      return res.send(ErrorResponse("Contact Number in use"));
     }
 
     let newFarmer = new Farmer(req.body);
@@ -38,14 +39,22 @@ export const CreateFarmer = async (req, res) => {
     let data = await newFarmer.save();
 
     if (data) {
+      let newUser = new User({
+        userWallet: newFarmer.walletAddress,
+        userType: 1,
+      });
+      let userData = await newUser.save();
+      if (!userData) {
+        return res.send(ErrorResponse("Cannot Register"));
+      }
       return res.send(
         Response("success", "Your are successfully signed up", data)
       );
     } else {
-      return res.send(Response("error", "Server Error", null));
+      return res.send(ErrorResponse("Server Error"));
     }
   } catch (e) {
-    return res.send(Response("error", e.message, null));
+    return res.send(ErrorResponse(e.message));
   }
 };
 
@@ -56,10 +65,10 @@ export const GetAllFarmers = async (req, res) => {
     if (farmers) {
       return res.send(Response("success", "Received all farmers", farmers));
     } else {
-      return res.send(Response("error", "Server Error", null));
+      return res.send(ErrorResponse("Server Error"));
     }
   } catch (e) {
-    return res.send(Response("error", e.message, null));
+    return res.send(ErrorResponse(e.message));
   }
 };
 
@@ -70,10 +79,10 @@ export const GetSingleFarmer = async (req, res) => {
     if (farmer) {
       return res.send(Response("success", "Farmer data fetched", farmer));
     } else {
-      return res.send(Response("error", "Server Error", null));
+      return res.send(ErrorResponse("Server Error"));
     }
   } catch (e) {
-    return res.send(Response("error", e.message, null));
+    return res.send(ErrorResponse(e.message));
   }
 };
 
@@ -85,14 +94,14 @@ export const UpdateFarmer = async (req, res) => {
       req.body,
       function (err, farmer) {
         if (err) {
-          return res.send(Response("error", err.message, null));
+          return res.send(ErrorResponse(err.message));
         } else {
           return res.send(Response("success", "Update Success", farmer));
         }
       }
     );
   } catch (e) {
-    return res.send(Response("error", e.message, null));
+    return res.send(ErrorResponse(e.message));
   }
 };
 
