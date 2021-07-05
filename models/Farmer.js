@@ -27,8 +27,8 @@ const farmerSchema = mongoose.Schema(
     },
 
     rating: {
-      type: String,
-      required: true,
+      type: Number,
+      default: 0,
     },
 
     walletAddress: {
@@ -57,10 +57,12 @@ const farmerSchema = mongoose.Schema(
 
     isVerified: {
       type: Boolean,
+      default: false,
     },
 
     hasProject: {
       type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
