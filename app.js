@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import FarmerRoutes from "./routes/FarmerRoutes.js";
+import InvestorRoutes from "./routes/InvestorRoutes.js"
 import LoginRoutes from "./routes/LoginRoutes.js";
 const app = express();
 dotenv.config();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Router setups
 app.use("/api/farmer", FarmerRoutes);
+app.use("/api/investor", InvestorRoutes);
 app.use("/login", LoginRoutes);
 mongoose.connect(process.env.DATABASE_CONNECTION, {
   useNewUrlParser: true,

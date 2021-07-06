@@ -1,9 +1,10 @@
+import Investor from "../models/Investor.js";
 import Farmer from "../models/Farmer.js";
 import { Response, Check, ErrorResponse } from "../helpers/helpers.js";
 import passwordHash from "password-hash";
 import User from "../models/User.js";
-// Create Farmer
-export const CreateFarmer = async (req, res) => {
+// Create Investor
+export const CreateInvestor = async (req, res) => {
   try {
     // Check if fields are empty
 
@@ -20,50 +21,57 @@ export const CreateFarmer = async (req, res) => {
     }
 
     //   Checks if wallet is registered already
-    let existingWallet = await Farmer.findOne({
-      walletAddress: req.body.walletAddress,
+    let existingWallet = await User.findOne({
+      userWallet: req.body.walletAddress,
     });
     if (existingWallet) {
       return res.send(ErrorResponse("Wallet already registered"));
     }
 
     // Checks if Phone number in use
-    let existingContact = await Farmer.findOne({ contact: req.body.contact });
+    let existingContactInvestor = await Investor.findOne({
+      contact: req.body.contact,
+    });
+    let existingContactFarmer = await Farmer.findOne({
+      contact: req.body.contact,
+    });
 
-    if (existingContact) {
+    if (existingContactInvestor || existingContactFarmer) {
       return res.send(ErrorResponse("Contact Number in use"));
     }
 
-    let newFarmer = new Farmer(req.body);
-    newFarmer.password = passwordHash.generate(newFarmer.password);
+    // Creating Investor
+    let newInvestor = new Investor(req.body);
+    newInvestor.password = passwordHash.generate(newInvestor.password);
 
-    // Creating new user
+    // Creating User
     let newUser = new User({
-      userId: newFarmer._id,
-      userWallet: newFarmer.walletAddress,
-      userType: 1,
+      userId: newInvestor._id,
+      userWallet: newInvestor.walletAddress,
+      userType: 2,
     });
 
-    if (newFarmer && newUser) {
-      let data = await newFarmer.save();
+    if (newInvestor && newUser) {
+      let data = await newInvestor.save();
       await newUser.save();
-      return res.send(Response("success", "Registration successfull", data));
+
+      return res.send(Response("Success", "Registration Success", data));
     }
 
-    return res.send(ErrorResponse("Registration failed"));
+    return res.send(ErrorResponse("Registration Failed"));
   } catch (e) {
     return res.send(ErrorResponse(e.message));
   }
 };
 
-// Get All Farmers
-export const GetAllFarmers = async (req, res) => {
+// Get All Investors
+export const GetAllInvestors = async (req, res) => {
   try {
-    let farmers = await Farmer.find();
-    if (farmers) {
+    let Investors = await Investor.find();
+    if (Investors) {
       return res.send(
-        Response("success", "Received all farmers", farmers, {
-          size: farmers.length,
+        Response("success", "Received all Investors", Investors, {
+          size: Investors.length,
         })
       );
     } else {
@@ -74,12 +82,12 @@ export const GetAllFarmers = async (req, res) => {
   }
 };
 
-// Get single farmer
-export const GetSingleFarmer = async (req, res) => {
+// Get single Investor
+export const GetSingleInvestor = async (req, res) => {
   try {
-    let farmer = await Farmer.findOne({ _id: req.params.id });
-    if (farmer) {
-      return res.send(Response("success", "Farmer data fetched", farmer));
+    let Investor = await Investor.findOne({ _id: req.params.id });
+    if (Investor) {
+      return res.send(Response("success", "Investor data fetched", Investor));
     } else {
       return res.send(ErrorResponse("Server Error"));
     }
@@ -88,17 +96,17 @@ export const GetSingleFarmer = async (req, res) => {
   }
 };
 
-// Update farmer
-export const UpdateFarmer = async (req, res) => {
+// Update Investor
+export const UpdateInvestor = async (req, res) => {
   try {
-    Farmer.findOneAndUpdate(
+    Investor.findOneAndUpdate(
       { _id: req.params.id },
       req.body,
-      function (err, farmer) {
+      function (err, Investor) {
         if (err) {
           return res.send(ErrorResponse(err.message));
         } else {
-          return res.send(Response("success", "Update Success", farmer));
+          return res.send(Response("success", "Update Success", Investor));
         }
       }
     );
@@ -107,13 +115,13 @@ export const UpdateFarmer = async (req, res) => {
   }
 };
 
-// Delete farmer
-export const DeleteFarmer = async (req, res) => {
+// Delete Investor
+export const DeleteInvestor = async (req, res) => {
   try {
-    Farmer.findOneAndRemove(
+    Investor.findOneAndRemove(
       { _id: req.params.id },
 
-      function (err, Farmer) {
+      function (err, Investor) {
         if (err) {
           return res.send(ErrorResponse(err.message));
         } else {
@@ -128,7 +136,9 @@ export const DeleteFarmer = async (req, res) => {
               }
             }
           );
-          return res.send(Response("success", "Deleted Successfully", Farmer));
+          return res.send(
+            Response("success", "Deleted Successfully", Investor)
+          );
         }
       }
     );
