@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import FarmerRoutes from "./routes/FarmerRoutes.js";
 import LoginRoutes from "./routes/LoginRoutes.js";
+import testAPIrouter from "./routes/testAPI.js";
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT || "8888";
@@ -14,6 +15,7 @@ app.use(express.json());
 // Router setups
 app.use("/api/farmer", FarmerRoutes);
 app.use("/login", LoginRoutes);
+app.use("/testAPI", testAPIrouter);
 mongoose.connect(process.env.DATABASE_CONNECTION, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
