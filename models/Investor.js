@@ -27,11 +27,6 @@ const investorSchema = mongoose.Schema(
       required: true,
     },
 
-    associatedProjects: {
-        type: String,
-        required: false
-    },
-
     walletAddress: {
       type: String,
       required: true,
@@ -49,6 +44,7 @@ const investorSchema = mongoose.Schema(
 
     isVerified: {
       type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
