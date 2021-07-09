@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 export const Login = async (req, res) => {
   try {
     // Empty Field
-    if (Check([req.body.wallet, req.body.password], "")) {
+    if (Check([req.body.walletAddress, req.body.password], "")) {
       return res.send(ErrorResponse("Empty Field"));
     }
 
