@@ -80,7 +80,7 @@ export const Login = async (req, res) => {
 
           return res.header("auth-token", token).send(
             Response("success", "Logged in as patron", investor, {
-              userType: 1,
+              userType: 2,
               token: token,
             })
           );
