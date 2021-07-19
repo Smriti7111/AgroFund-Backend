@@ -25,10 +25,13 @@ export const CreateFarmer = async (req, res) => {
     Check(
       [
         req.body.name,
+        req.body.email,
         req.body.address,
         req.body.walletAddress,
         req.body.contact,
         req.body.password,
+        req.body.confirmPassword,
+        req.body.check,
       ],
       ""
     )

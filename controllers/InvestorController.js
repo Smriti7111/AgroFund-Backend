@@ -8,13 +8,19 @@ export const CreateInvestor = async (req, res) => {
   // Check if fields are empty
 
   if (
-    Check([
-      req.body.name,
-      req.body.address,
-      req.body.walletAddress,
-      req.body.contact,
-      req.body.password,
-    ])
+    Check(
+      [
+        req.body.name,
+        req.body.email,
+        req.body.address,
+        req.body.walletAddress,
+        req.body.contact,
+        req.body.password,
+        req.body.confirmPassword,
+        req.body.check,
+      ],
+      ""
+    )
   ) {
     return res.send(ErrorResponse("Empty Field"));
   }

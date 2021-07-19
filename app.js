@@ -5,10 +5,13 @@ import cors from "cors";
 import FarmerRoutes from "./routes/FarmerRoutes.js";
 import InvestorRoutes from "./routes/InvestorRoutes.js";
 import LoginRoutes from "./routes/LoginRoutes.js";
+
 import ProjectRoutes from "./routes/ProjectRoutes.js";
 
 // Middlewares
 import { AuthenticateAsFarmer } from "./middlewares/Authentication.js";
+
+import testAPIrouter from "./routes/testAPI.js";
 
 const app = express();
 dotenv.config();
@@ -21,7 +24,11 @@ app.use(express.json());
 app.use("/api/farmer", FarmerRoutes);
 app.use("/api/investor", InvestorRoutes);
 app.use("/login", LoginRoutes);
+
 app.use("/api/project", ProjectRoutes);
+
+app.use("/testAPI", testAPIrouter);
+
 mongoose.connect(process.env.DATABASE_CONNECTION, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

@@ -21,6 +21,12 @@ const farmerSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+
+    confirmPassword: {
+      type: String,
+      required: true,
+    },
+
     address: {
       type: String,
       required: true,
@@ -29,6 +35,10 @@ const farmerSchema = mongoose.Schema(
     rating: {
       type: Number,
       default: 0,
+    },
+
+    check: {
+      type: Boolean,
     },
 
     walletAddress: {
