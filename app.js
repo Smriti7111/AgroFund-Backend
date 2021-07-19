@@ -3,8 +3,13 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import FarmerRoutes from "./routes/FarmerRoutes.js";
-import InvestorRoutes from "./routes/InvestorRoutes.js"
+import InvestorRoutes from "./routes/InvestorRoutes.js";
 import LoginRoutes from "./routes/LoginRoutes.js";
+import ProjectRoutes from "./routes/ProjectRoutes.js";
+
+// Middlewares
+import { AuthenticateAsFarmer } from "./middlewares/Authentication.js";
+
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT || "8888";
@@ -16,6 +21,7 @@ app.use(express.json());
 app.use("/api/farmer", FarmerRoutes);
 app.use("/api/investor", InvestorRoutes);
 app.use("/login", LoginRoutes);
+app.use("/api/project", ProjectRoutes);
 mongoose.connect(process.env.DATABASE_CONNECTION, {
   useNewUrlParser: true,
   useUnifiedTopology: true,

@@ -8,12 +8,15 @@ import jwt from "jsonwebtoken";
 export const Login = async (req, res) => {
   try {
     // Empty Field
-    if (Check([req.body.wallet, req.body.password], "")) {
+    if (Check([req.body.walletAddress, req.body.password], "")) {
       return res.send(ErrorResponse("Empty Field"));
     }
 
     // Validate
+    // console.log(req.body);
+    console.log(req.body.walletAddress);
     let user = await User.findOne({ userWallet: req.body.walletAddress });
+    // console.log(user);
     // if user not found
     if (!user) {
       return res.status(404).send(ErrorResponse("User not registered"));
@@ -28,7 +31,7 @@ export const Login = async (req, res) => {
         case 1:
           let farmer = await Farmer.findOne({ walletAddress: user.userWallet });
           if (!farmer) {
-            return res.status(404).send(ErrorResponse("User not registered"));
+            return res.status(404).send(ErrorResponse("Farmer not registered"));
           }
           //   Password Verification
           let isPasswordVerified = passwordHash.verify(
@@ -59,7 +62,9 @@ export const Login = async (req, res) => {
             walletAddress: user.userWallet,
           });
           if (!investor) {
-            return res.status(404).send(ErrorResponse("User not registered"));
+            return res
+              .status(404)
+              .send(ErrorResponse("Investor not registered"));
           }
           //   Password Verification
           let isInvestorPasswordVerified = passwordHash.verify(
@@ -79,8 +84,8 @@ export const Login = async (req, res) => {
           );
 
           return res.header("auth-token", token).send(
-            Response("success", "Logged in as patron", investor, {
-              userType: 1,
+            Response("success", "Logged in as investor", investor, {
+              userType: 2,
               token: token,
             })
           );

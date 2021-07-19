@@ -60,6 +60,16 @@ const farmerSchema = mongoose.Schema(
       default: false,
     },
 
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+
     hasProject: {
       type: Boolean,
       default: false,
