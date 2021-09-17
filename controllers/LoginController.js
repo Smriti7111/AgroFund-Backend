@@ -1,4 +1,5 @@
 import Farmer from "../models/Farmer.js";
+import Admin from "../models/SuperAdmin.js";
 import Investor from "../models/Investor.js";
 import User from "../models/User.js";
 import { Response, Check, ErrorResponse } from "../helpers/helpers.js";
@@ -6,16 +7,16 @@ import passwordHash from "password-hash";
 import jwt from "jsonwebtoken";
 // Login Controller
 export const Login = async (req, res) => {
+  // Empty Field
+  if (Check([req.body.walletAddress, req.body.password], "")) {
+    return res.send(ErrorResponse("Empty Field"));
+  }
   try {
-    // Empty Field
-    if (Check([req.body.walletAddress, req.body.password], "")) {
-      return res.send(ErrorResponse("Empty Field"));
-    }
-
     // Validate
     // console.log(req.body);
-    console.log(req.body.walletAddress);
+    // console.log(req.body.walletAddress);
     let user = await User.findOne({ userWallet: req.body.walletAddress });
+
     // console.log(user);
     // if user not found
     if (!user) {
@@ -24,8 +25,35 @@ export const Login = async (req, res) => {
       let token = "";
       switch (user.userType) {
         case 0:
-          return res.send(
-            Response("success", "Signed In as Super Admin", null)
+          let admin = await Admin.findOne({ walletAddress: user.userWallet });
+          if (!admin) {
+            return res.send(ErrorResponse("User not registered"));
+          }
+
+          //   Password Verification
+          let isAdminPasswordVerified = passwordHash.verify(
+            req.body.password,
+            admin.password
+          );
+          if (!isAdminPasswordVerified) {
+            return res.send(ErrorResponse("Incorrect Password"));
+          }
+
+          // Token Verification
+          token = jwt.sign(
+            {
+              _id: admin._id,
+              userType: user.userType,
+              isVerified: admin.isVerified,
+            },
+            process.env.TOKEN_KEY
+          );
+
+          return res.header("auth-token", token).send(
+            Response("success", "Logged in as Super Admin", admin, {
+              userType: 0,
+              token: token,
+            })
           );
 
         case 1:

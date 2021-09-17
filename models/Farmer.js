@@ -47,22 +47,22 @@ const farmerSchema = mongoose.Schema(
     },
     citizenshipNo: {
       type: String,
-      required: false,
+      default: "",
     },
 
     panNo: {
       type: String,
-      required: false,
+      default: "",
     },
 
     citizenship: {
       type: String,
-      required: false,
+      default: "",
     },
 
     pan: {
       type: String,
-      required: false,
+      default: "",
     },
 
     isVerified: {
@@ -83,6 +83,11 @@ const farmerSchema = mongoose.Schema(
     hasProject: {
       type: Boolean,
       default: false,
+    },
+
+    projectsCompleted: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import AdminRoutes from "./routes/SuperAdminRoutes.js";
 import FarmerRoutes from "./routes/FarmerRoutes.js";
 import InvestorRoutes from "./routes/InvestorRoutes.js";
 import LoginRoutes from "./routes/LoginRoutes.js";
@@ -9,18 +10,21 @@ import LoginRoutes from "./routes/LoginRoutes.js";
 import ProjectRoutes from "./routes/ProjectRoutes.js";
 
 // Middlewares
-import { AuthenticateAsFarmer } from "./middlewares/Authentication.js";
+import { AuthenticateAsAdmin } from "./middlewares/Authentication.js";
 
 import testAPIrouter from "./routes/testAPI.js";
 
 const app = express();
 dotenv.config();
 const PORT = process.env.PORT || "8888";
+
+app.use(express.static("./public"));
 app.use(cors());
 // This is required for json transmission and acceptance
 app.use(express.json());
 
 // Router setups
+app.use("/api/admin", AdminRoutes);
 app.use("/api/farmer", FarmerRoutes);
 app.use("/api/investor", InvestorRoutes);
 app.use("/login", LoginRoutes);

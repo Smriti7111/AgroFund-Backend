@@ -1,8 +1,61 @@
 import Investor from "../models/Investor.js";
-import Farmer from "../models/Farmer.js";
 import { Response, Check, ErrorResponse } from "../helpers/helpers.js";
 import passwordHash from "password-hash";
 import User from "../models/User.js";
+import Client from "twilio";
+import dotenv from "dotenv";
+import Farmer from "../models/Farmer.js";
+
+dotenv.config();
+
+// Twilio Setup
+
+const client = Client(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN,
+  {
+    lazyLoading: true,
+  }
+);
+
+// Farmer Verification info posting
+
+export const PostVerificationInformation = async (req, res) => {
+  try {
+    // let myFarmer = await Farmer.findOne({ _id: req.user._id });
+    // if (!myFarmer) {
+    //   return res.send(ErrorResponse("No user found"));
+    // }
+
+    Investor.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: {
+          citizenship: `uploads/investor/citizenship/${req.files.citizenship[0].filename}`,
+          pan: `uploads/investor/citizenship/${req.files.pan[0].filename}`,
+          panNo: req.body.panNo,
+          citizenshipNo: req.body.citizenshipNo,
+        },
+      },
+      function (err, data) {
+        if (err) {
+          return res.send(ErrorResponse("Error encountered. Please try again"));
+        } else {
+          return res.send(
+            Response(
+              "success",
+              "Verification Request has been submitted. You will soon be notified",
+              data
+            )
+          );
+        }
+      }
+    );
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};
+
 // Create Investor
 export const CreateInvestor = async (req, res) => {
   // Check if fields are empty
@@ -37,6 +90,7 @@ export const CreateInvestor = async (req, res) => {
   let existingContactInvestor = await Investor.findOne({
     contact: req.body.contact,
   });
+
   let existingContactFarmer = await Farmer.findOne({
     contact: req.body.contact,
   });
@@ -149,5 +203,85 @@ export const DeleteInvestor = async (req, res) => {
     );
   } catch (e) {
     return res.send(Response("error", e.message, null));
+  }
+};
+
+// Get Verification code
+
+export const GetVerificationCode = async (req, res) => {
+  try {
+    let investor = await Investor.findOne({ _id: req.params.investorId });
+
+    // Checking if phone number is verified already
+    if (investor.isPhoneVerified) {
+      return res.send(ErrorResponse("Your phone number is already verified"));
+    }
+    // Creates a verification code
+    client.verify
+      .services(process.env.TWILIO_SERVICE_ID)
+      .verifications.create({
+        to: `+977${investor.contact}`,
+        channel: "sms",
+      })
+      .then((response) =>
+        res.send(
+          Response(
+            "success",
+            "Code has been sent to your mobile. Please wait for few seconds before pressing resend code",
+            response
+          )
+        )
+      )
+      .catch((error) => {
+        // Checking for valid mobile number
+        if (error.status === 400) {
+          return res.send(ErrorResponse("Invalid Mobile Number"));
+        } else {
+          return res.send(ErrorResponse("Error Occured"));
+        }
+      });
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};
+
+// Verify Code
+export const VerifyCode = async (req, res) => {
+  try {
+    let investor = await Investor.findOne({ _id: req.params.investorId });
+
+    // Verifying the code
+    client.verify
+      .services(process.env.TWILIO_SERVICE_ID)
+      .verificationChecks.create({
+        to: `+977${investor.contact}`,
+        code: req.body.code,
+      })
+      .then((data) => {
+        if (data.status === "approved") {
+          Investor.findByIdAndUpdate(
+            req.params.investorId,
+            {
+              $set: { isPhoneVerified: true },
+            },
+            (err) => {
+              if (!err) {
+                return res.send(
+                  Response("success", "Phone number verified", data)
+                );
+              } else {
+                return res.send(
+                  ErrorResponse("Failed to update investor data")
+                );
+              }
+            }
+          );
+        } else {
+          return res.send(ErrorResponse("Code didnot match"));
+        }
+      })
+      .catch((error) => res.send(ErrorResponse("Error! Try again later")));
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
   }
 };

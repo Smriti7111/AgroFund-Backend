@@ -4,6 +4,9 @@ import passwordHash from "password-hash";
 import User from "../models/User.js";
 import Client from "twilio";
 import dotenv from "dotenv";
+import Investor from "../models/Investor.js";
+import multer from "multer";
+import path from "path";
 
 dotenv.config();
 
@@ -16,6 +19,44 @@ const client = Client(
     lazyLoading: true,
   }
 );
+
+// Farmer Verification info posting
+
+export const PostVerificationInformation = async (req, res) => {
+  try {
+    // let myFarmer = await Farmer.findOne({ _id: req.user._id });
+    // if (!myFarmer) {
+    //   return res.send(ErrorResponse("No user found"));
+    // }
+
+    Farmer.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: {
+          citizenship: `uploads/farmer/citizenship/${req.files.citizenship[0].filename}`,
+          pan: `uploads/farmer/citizenship/${req.files.pan[0].filename}`,
+          panNo: req.body.panNo,
+          citizenshipNo: req.body.citizenshipNo,
+        },
+      },
+      function (err, data) {
+        if (err) {
+          return res.send(ErrorResponse("Error encountered. Please try again"));
+        } else {
+          return res.send(
+            Response(
+              "success",
+              "Verification Request has been submitted. You will soon be notified",
+              data
+            )
+          );
+        }
+      }
+    );
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};
 
 // Create Farmer
 export const CreateFarmer = async (req, res) => {
@@ -40,8 +81,8 @@ export const CreateFarmer = async (req, res) => {
   }
 
   //   Checks if wallet is registered already
-  let existingWallet = await Farmer.findOne({
-    walletAddress: req.body.walletAddress,
+  let existingWallet = await User.findOne({
+    userWallet: req.body.walletAddress,
   });
   if (existingWallet) {
     return res.send(ErrorResponse("Wallet already registered"));
@@ -49,8 +90,9 @@ export const CreateFarmer = async (req, res) => {
 
   // Checks if Phone number in use
   let existingContact = await Farmer.findOne({ contact: req.body.contact });
+  let existingContact1 = await Investor.findOne({ contact: req.body.contact });
 
-  if (existingContact) {
+  if (existingContact || existingContact1) {
     return res.send(ErrorResponse("Contact Number in use"));
   }
 
@@ -159,7 +201,7 @@ export const DeleteFarmer = async (req, res) => {
   }
 };
 
-// Verify Phone
+// Get Verification code
 
 export const GetVerificationCode = async (req, res) => {
   try {
