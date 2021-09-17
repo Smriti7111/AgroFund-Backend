@@ -24,7 +24,7 @@ app.use(cors());
 app.use(express.json());
 
 // Router setups
-app.use("/api/admin", AdminRoutes);
+app.use("/api/admin", AuthenticateAsAdmin, AdminRoutes);
 app.use("/api/farmer", FarmerRoutes);
 app.use("/api/investor", InvestorRoutes);
 app.use("/login", LoginRoutes);

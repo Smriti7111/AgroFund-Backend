@@ -89,6 +89,10 @@ const farmerSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    requestedForVerification: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

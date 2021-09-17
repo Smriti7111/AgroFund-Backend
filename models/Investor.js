@@ -60,6 +60,11 @@ const investorSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    requestedForVerification: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

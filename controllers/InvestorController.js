@@ -18,44 +18,6 @@ const client = Client(
   }
 );
 
-// Farmer Verification info posting
-
-export const PostVerificationInformation = async (req, res) => {
-  try {
-    // let myFarmer = await Farmer.findOne({ _id: req.user._id });
-    // if (!myFarmer) {
-    //   return res.send(ErrorResponse("No user found"));
-    // }
-
-    Investor.findOneAndUpdate(
-      { _id: req.user._id },
-      {
-        $set: {
-          citizenship: `uploads/investor/citizenship/${req.files.citizenship[0].filename}`,
-          pan: `uploads/investor/citizenship/${req.files.pan[0].filename}`,
-          panNo: req.body.panNo,
-          citizenshipNo: req.body.citizenshipNo,
-        },
-      },
-      function (err, data) {
-        if (err) {
-          return res.send(ErrorResponse("Error encountered. Please try again"));
-        } else {
-          return res.send(
-            Response(
-              "success",
-              "Verification Request has been submitted. You will soon be notified",
-              data
-            )
-          );
-        }
-      }
-    );
-  } catch (e) {
-    return res.send(ErrorResponse(e.message));
-  }
-};
-
 // Create Investor
 export const CreateInvestor = async (req, res) => {
   // Check if fields are empty
@@ -281,6 +243,40 @@ export const VerifyCode = async (req, res) => {
         }
       })
       .catch((error) => res.send(ErrorResponse("Error! Try again later")));
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};
+
+// Invesor Verification info posting
+
+export const PostVerificationInformation = async (req, res) => {
+  try {
+    Investor.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: {
+          citizenship: `uploads/investor/citizenship/${req.files.citizenship[0].filename}`,
+          pan: `uploads/investor/citizenship/${req.files.pan[0].filename}`,
+          panNo: req.body.panNo,
+          citizenshipNo: req.body.citizenshipNo,
+          requestedForVerification: true,
+        },
+      },
+      function (err, data) {
+        if (err) {
+          return res.send(ErrorResponse("Error encountered. Please try again"));
+        } else {
+          return res.send(
+            Response(
+              "success",
+              "Verification Request has been submitted. You will soon be notified",
+              data
+            )
+          );
+        }
+      }
+    );
   } catch (e) {
     return res.send(ErrorResponse(e.message));
   }
