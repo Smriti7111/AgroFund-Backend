@@ -50,7 +50,36 @@ export const CreateProject = async (req, res) => {
   }
 
   // Creating Project
-  let newProject = new Project(req.body);
+  let newProject = new Project({
+    owner: req.user._id,
+    title,
+    investmentToBeRaised,
+    minimumInvestment,
+    maximumInvestment,
+    returnPerMinimumInvestment,
+    lastDateOfInvestment,
+    expectedDateOfProjectCompletion,
+    projectDescription,
+  });
+
+  if (maximumInvestment < minimumInvestment) {
+    return res.send(
+      ErrorResponse(
+        "Maximum Investment should be greater than minimum investment"
+      )
+    );
+  }
+
+  if (
+    maximumInvestment > investmentToBeRaised ||
+    minimumInvestment > investmentToBeRaised
+  ) {
+    return res.send(
+      ErrorResponse(
+        "Investment to be raise is smaller than minimum or maximum investment. Check the value carefully"
+      )
+    );
+  }
 
   try {
     let data = await newProject.save();

@@ -61,6 +61,11 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+
+    isActive: {
+      type: Boolean,
+      required: false,
+    },
   },
   { timestamps: true }
 );

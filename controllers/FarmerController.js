@@ -163,6 +163,8 @@ export const DeleteFarmer = async (req, res) => {
   }
 };
 
+// Phone Verification functions starts here
+
 // Get Verification code
 
 export const GetVerificationCode = async (req, res) => {
@@ -239,11 +241,12 @@ export const VerifyCode = async (req, res) => {
   } catch (e) {
     return res.send(ErrorResponse(e.message));
   }
-};
+}; //Phone Verification section ends here
 
 // Farmer Verification info posting
 
 export const PostVerificationInformation = async (req, res) => {
+  // console.log(req);
   try {
     Farmer.findOneAndUpdate(
       { _id: req.user._id },

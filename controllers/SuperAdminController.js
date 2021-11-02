@@ -215,3 +215,41 @@ export const VerifyInvestor = async (req, res) => {
     return res.send(ErrorResponse(e.message));
   }
 };
+
+// Get All Farmer verification request
+export const GetAllFarmerVerificationRequest = async (req, res) => {
+  try {
+    let farmers = await Farmer.find({
+      requestedForVerification: true,
+      isVerified: false,
+    });
+    if (!farmers) {
+      return res.send(ErrorResponse("Server Error."));
+    } else {
+      return res.send(
+        Response("success", "All verification request fetched", farmers)
+      );
+    }
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};
+
+// Get All Investor verification request
+export const GetAllInvestorVerificationRequest = async (req, res) => {
+  try {
+    let investors = await Investor.find({
+      requestedForVerification: true,
+      isVerified: false,
+    });
+    if (!investors) {
+      return res.send(ErrorResponse("Server Error."));
+    } else {
+      return res.send(
+        Response("success", "All verification request fetched", investors)
+      );
+    }
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};

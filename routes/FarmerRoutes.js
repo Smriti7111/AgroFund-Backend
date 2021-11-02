@@ -90,6 +90,7 @@ FarmerRouter.post(
   AuthenticateAsFarmer,
   uploadFiles,
   (req, res) => {
+    // console.log(req.files);
     PostVerificationInformation(req, res);
   }
 );
