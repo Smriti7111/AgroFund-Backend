@@ -12,7 +12,10 @@ import {
   PostVerificationInformation,
 } from "../controllers/FarmerController.js";
 import express from "express";
-import { AuthenticateAsFarmer } from "../middlewares/Authentication.js";
+import {
+  AuthenticateAsAdmin,
+  AuthenticateAsFarmer,
+} from "../middlewares/Authentication.js";
 import { ErrorResponse, Response } from "../helpers/helpers.js";
 import multer from "multer";
 import path from "path";
@@ -82,7 +85,7 @@ FarmerRouter.post("/", CreateFarmer);
 FarmerRouter.get("/", GetAllFarmers);
 FarmerRouter.get("/:id", GetSingleFarmer);
 FarmerRouter.put("/:id", UpdateFarmer);
-FarmerRouter.delete("/:id", DeleteFarmer);
+FarmerRouter.delete("/:id", AuthenticateAsAdmin, DeleteFarmer);
 FarmerRouter.get("/getVerificationCode/:farmerId", GetVerificationCode);
 FarmerRouter.post("/verifyCode/:farmerId", VerifyCode);
 FarmerRouter.post(
