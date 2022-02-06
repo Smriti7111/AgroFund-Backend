@@ -21,7 +21,7 @@ const createAdmin = async () => {
   let data = {
     name: "Sagar Subedi",
     email: "codeevil69@gmail.com",
-    walletAddress: "0x2ee99243bb37065295b40F789F545bd1B03828e2",
+    walletAddress: "0x2ee99243bb37065295b40f789f545bd1b03828e2",
     address: "Kathmandu",
     contact: "9841509916",
     password: passwordHash.generate("helloworld"),

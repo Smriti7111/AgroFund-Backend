@@ -60,6 +60,12 @@ const investorSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    investedProjects: [
+      {
+        projectId: String,
+        investedAmount: Number,
+      },
+    ],
 
     requestedForVerification: {
       type: Boolean,

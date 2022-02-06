@@ -54,8 +54,16 @@ export const CreateFarmer = async (req, res) => {
   let existingContact = await Farmer.findOne({ contact: req.body.contact });
   let existingContact1 = await Investor.findOne({ contact: req.body.contact });
 
+  // Checks if email in use
+  let existingEmail = await Farmer.findOne({ email: req.body.email });
+  let existingEmail1 = await Investor.findOne({ email: req.body.email });
+
   if (existingContact || existingContact1) {
     return res.send(ErrorResponse("Contact Number in use"));
+  }
+
+  if (existingEmail || existingEmail1) {
+    return res.send(ErrorResponse("Email in use"));
   }
 
   // Creating Farmer

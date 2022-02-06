@@ -62,7 +62,7 @@ export const CreateProject = async (req, res) => {
     projectDescription,
   });
 
-  if (maximumInvestment < minimumInvestment) {
+  if (parseInt(maximumInvestment) < parseInt(minimumInvestment)) {
     return res.send(
       ErrorResponse(
         "Maximum Investment should be greater than minimum investment"
@@ -102,7 +102,16 @@ export const CreateProject = async (req, res) => {
 // Get all Projects
 export const GetAllProjects = async (req, res) => {
   try {
-    let allProjects = await Project.find();
+    let allProjects = await Project.aggregate([
+      {
+        $lookup: {
+          from: "Farmer",
+          localField: "owner",
+          foreignField: "_id",
+          as: "farmer",
+        },
+      },
+    ]);
     if (allProjects) {
       return res.send(Response("success", "All Projects fetched", allProjects));
     }
