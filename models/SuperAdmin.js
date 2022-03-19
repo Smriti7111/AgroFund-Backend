@@ -22,11 +22,6 @@ const superAdminSchema = mongoose.Schema(
       required: true,
     },
 
-    confirmPassword: {
-      type: String,
-      required: true,
-    },
-
     address: {
       type: String,
       required: true,

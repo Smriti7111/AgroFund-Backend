@@ -20,7 +20,9 @@ export const Login = async (req, res) => {
     // console.log(user);
     // if user not found
     if (!user) {
-      return res.status(404).send(ErrorResponse("User not registered"));
+      return res
+        .status(200)
+        .send(ErrorResponse("User has not been registered"));
     } else {
       let token = "";
       switch (user.userType) {

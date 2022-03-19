@@ -1,12 +1,17 @@
 import Project from "../models/Project.js";
 import Farmer from "../models/Farmer.js";
+import Investor from "../models/Investor.js";
+
 import { Response, ErrorResponse, Check } from "../helpers/helpers.js";
+import mongoose from "mongoose";
 // Create Project
 export const CreateProject = async (req, res) => {
   // Destructing the request body
+
   const {
     title,
     investmentToBeRaised,
+    cropName,
     minimumInvestment,
     maximumInvestment,
     returnPerMinimumInvestment,
@@ -24,6 +29,7 @@ export const CreateProject = async (req, res) => {
         lastDateOfInvestment,
         expectedDateOfProjectCompletion,
         returnPerMinimumInvestment,
+        cropName,
       ],
       ""
     )
@@ -37,11 +43,11 @@ export const CreateProject = async (req, res) => {
 
   // Checking if farmer has project
   let farmer = await Farmer.findOne({ _id: req.user._id });
-  if (farmer.hasProject) {
-    return res.send(
-      ErrorResponse("You have a ongoing project.Cannot create new project")
-    );
-  }
+  // if (farmer.hasProject) {
+  //   return res.send(
+  //     ErrorResponse("You have a ongoing project.Cannot create new project")
+  //   );
+  // }
 
   if (farmer.isVerified === false) {
     return res.send(
@@ -49,10 +55,19 @@ export const CreateProject = async (req, res) => {
     );
   }
 
+  if (parseInt(maximumInvestment) % parseInt(minimumInvestment) !== 0) {
+    return res.send(
+      ErrorResponse(
+        "Maximum investment should be multiple of minimum investment"
+      )
+    );
+  }
+
   // Creating Project
   let newProject = new Project({
     owner: req.user._id,
     title,
+    cropName,
     investmentToBeRaised,
     minimumInvestment,
     maximumInvestment,
@@ -103,6 +118,9 @@ export const CreateProject = async (req, res) => {
 export const GetAllProjects = async (req, res) => {
   try {
     let allProjects = await Project.aggregate([
+      {
+        $addFields: { owner: { $toObjectId: "$_owner" } },
+      },
       {
         $lookup: {
           from: "Farmer",
@@ -158,3 +176,34 @@ export const GetProjectsOfFarmer = async (req, res) => {
 
 // Accept or Terminate Project
 export const SetProjectStatus = () => {};
+
+// Invest in project
+
+export const InvestInProject = async (req, res) => {
+  let myProject = await Project.findOne({ _id: req.body.projectId });
+  let investor = await Investor.findOne({ _id: req.body.investorId });
+
+  if (
+    req.body.investmentAmount >
+    req.body.maximumInvestment - req.body.investmentRaised
+  ) {
+    return res.send(ErrorResponse("Investement exceeds the fund pool"));
+  }
+
+  try {
+    await Project.findByIdAndUpdate(req.body.projectId, {
+      $push: { investors: req.body.investorId },
+    });
+
+    await Investor.findByIdAndUpdate(req.body.investorId, {
+      $push: {
+        investedProjects: {
+          projectId: req.body.projectId,
+          investedAmount: req.body.investmentAmount,
+        },
+      },
+    });
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};

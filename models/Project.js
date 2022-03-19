@@ -11,6 +11,16 @@ const projectSchema = new mongoose.Schema(
       required: true,
     },
 
+    cropName: {
+      type: String,
+      required: true,
+    },
+
+    investmentRaised: {
+      type: Number,
+      default: 0,
+    },
+
     investmentToBeRaised: {
       type: Number,
       required: true,
@@ -43,8 +53,8 @@ const projectSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["In Process", "Accepted", "Terminated"],
-      default: "In Process",
+      enum: ["Initial", "Ready", "Planted", "Harvested", "Shipped"],
+      default: "Ready",
     },
 
     projectDescription: {
@@ -66,6 +76,8 @@ const projectSchema = new mongoose.Schema(
       type: Boolean,
       required: false,
     },
+
+    investors: Array(String),
   },
   { timestamps: true }
 );

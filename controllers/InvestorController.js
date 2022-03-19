@@ -31,7 +31,7 @@ export const CreateInvestor = async (req, res) => {
         req.body.walletAddress,
         req.body.contact,
         req.body.password,
-        req.body.confirmPassword,
+
         req.body.check,
       ],
       ""
@@ -257,7 +257,7 @@ export const PostVerificationInformation = async (req, res) => {
       {
         $set: {
           citizenship: `uploads/investor/citizenship/${req.files.citizenship[0].filename}`,
-          pan: `uploads/investor/citizenship/${req.files.pan[0].filename}`,
+          pan: `uploads/investor/pan/${req.files.pan[0].filename}`,
           panNo: req.body.panNo,
           citizenshipNo: req.body.citizenshipNo,
           requestedForVerification: true,

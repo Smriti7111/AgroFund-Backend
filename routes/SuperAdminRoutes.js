@@ -8,6 +8,8 @@ import {
   VerifyInvestor,
   GetAllFarmerVerificationRequest,
   GetAllInvestorVerificationRequest,
+  RejectFarmer,
+  RejectInvestor
 } from "../controllers/SuperAdminController.js";
 import express from "express";
 import { AuthenticateAsAdmin } from "../middlewares/Authentication.js";
@@ -20,6 +22,8 @@ AdminRouter.get("/:id", GetSingleAdmin);
 AdminRouter.put("/:id", UpdateAdmin);
 AdminRouter.delete("/:id", DeleteAdmin);
 AdminRouter.put("/verifyFarmer/:farmerId", VerifyFarmer);
+AdminRouter.put("/rejectFarmer/:farmerId", RejectFarmer);
+AdminRouter.put("/rejectInvestor/:investorId", RejectInvestor);
 AdminRouter.put("/verifyInvestor/:investorId", VerifyInvestor);
 AdminRouter.get(
   "/verificationRequests/farmer",

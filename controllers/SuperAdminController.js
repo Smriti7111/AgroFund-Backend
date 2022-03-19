@@ -17,7 +17,6 @@ export const CreateAdmin = async (req, res) => {
         req.body.walletAddress,
         req.body.contact,
         req.body.password,
-        req.body.confirmPassword,
       ],
       ""
     )
@@ -182,6 +181,37 @@ export const VerifyFarmer = async (req, res) => {
   }
 };
 
+//Reject Farmer
+export const RejectFarmer = async (req, res) => {
+  let farmer = await Farmer.findOne({ _id: req.params.farmerId });
+  if (!farmer) {
+    return res.send(ErrorResponse("Farmer not found!"));
+  }
+
+  try {
+    Farmer.findOneAndUpdate(
+      { _id: req.params.farmerId },
+      {
+        $set: {
+          isVerified: false,
+          requestedForVerification: false,
+        },
+      },
+      (err, data) => {
+        if (err) {
+          return res.send(ErrorResponse(e.message));
+        } else {
+          return res.send(
+            Response("success", "Verification request deleted", data)
+          );
+        }
+      }
+    );
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};
+
 // Verify Investor
 
 export const VerifyInvestor = async (req, res) => {
@@ -207,6 +237,36 @@ export const VerifyInvestor = async (req, res) => {
         } else {
           return res.send(
             Response("success", "User has been verified successfully", data)
+          );
+        }
+      }
+    );
+  } catch (e) {
+    return res.send(ErrorResponse(e.message));
+  }
+};
+
+//Delete Investor
+export const RejectInvestor = async (req, res) => {
+  let investor = await Investor.findOne({ _id: req.params.investorId });
+  if (!investor) {
+    return res.send(ErrorResponse("Investor not found!"));
+  }
+  try {
+    Investor.findOneAndUpdate(
+      { _id: req.params.investorId },
+      {
+        $set: {
+          isVerified: false,
+          requestedForVerification: false,
+        },
+      },
+      (err, data) => {
+        if (err) {
+          return res.send(ErrorResponse(e.message));
+        } else {
+          return res.send(
+            Response("success", "Request has been deleted", data)
           );
         }
       }
